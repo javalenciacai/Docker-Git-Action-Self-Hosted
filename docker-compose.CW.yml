@@ -1,0 +1,23 @@
+#Cowork.Ctis
+x-runner-commonCW: &runner-common
+  image: myoung34/github-runner:latest
+  restart: unless-stopped
+  dns:
+    - 8.8.8.8
+    - 1.1.1.1
+  environment:
+    REPO_URL: ${REPO_URL}
+    RUNNER_SCOPE: repo
+    LABELS: ${LABELS:-self-hosted,linux,x64,docker}
+    RUNNER_WORKDIR: /tmp/runner/work
+    EPHEMERAL: ${EPHEMERAL:-false}
+    DISABLE_AUTO_UPDATE: ${DISABLE_AUTO_UPDATE:-true}
+    ACCESS_TOKEN: ${ACCESS_TOKEN}
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+
+services:
+  # Servicio unico escalable. Define cuantos runners quieres con --scale:
+  #   docker compose --env-file .env up -d --scale github-runner=3
+  github-runnerCW:
+    <<: *runner-common
